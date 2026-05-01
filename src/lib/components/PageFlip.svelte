@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { appState, completeFlip } from '$lib/state/appState';
-	import { TIMING } from '$lib/motion/variants';
+	import { appState, completeFlip } from '$lib/state/appState.js';
+	import { TIMING } from '$lib/motion/variants.js';
 	import { get } from 'svelte/store';
 	import gsap from 'gsap';
 
@@ -29,10 +29,13 @@
 		hasStarted = true;
 		autoProgress = manualProgress !== undefined ? manualProgress : initialProgress;
 
-		// Kill previous timeline if any
+		// kill prev timeline if any
 		if (flipTimeline) flipTimeline.kill();
 
 		const proxy = { p: autoProgress };
+		const remaining = 1 - autoProgress;
+		const duration = (TIMING.PAGE_FLIP / 1000) * remaining;
+		const ease = remaining < 0.4 ? 'power1.out' : 'power2.inOut';
 
 		flipTimeline = gsap.timeline({
 			onComplete: () => {
@@ -44,8 +47,8 @@
 
 		flipTimeline.to(proxy, {
 			p: 1,
-			duration: TIMING.PAGE_FLIP / 1000,
-			ease: 'power2.inOut',
+			duration,
+			ease,
 			onUpdate: () => {
 				autoProgress = proxy.p;
 			}
@@ -70,11 +73,13 @@
 			? Math.sin(flipProgress * Math.PI) * 0.4
 			: 0
 	);
+
+	let departOpacity = $derived(Math.max(0, 1 - flipProgress * 2));
+	let arriveOpacity = $derived(Math.max(0, (flipProgress - 0.5) * 2));
 </script>
 
 <div class="flip-container">
-	<!-- Stationary bottom page -->
-	<div class="stationary-page">
+	<div class="stationary-page" style="opacity: {arriveOpacity};">
 		{#if direction === 1}
 			{@render nextPage()}
 		{:else}
@@ -82,9 +87,8 @@
 		{/if}
 	</div>
 
-	<!-- Flipping top page -->
 	<div class="flipping-page" style="transform: rotateY({rotateY}deg);">
-		<div class="flip-face flip-front">
+		<div class="flip-face flip-front" style="opacity: {departOpacity};">
 			{#if direction === 1}
 				{@render currentPage()}
 			{:else}

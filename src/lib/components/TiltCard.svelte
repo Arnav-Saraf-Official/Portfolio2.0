@@ -47,10 +47,10 @@
 		border: 1px solid rgba(212, 168, 67, 0.12);
 		border-radius: 8px;
 		background: rgba(255, 244, 200, 0.03);
-		transition: transform 200ms ease-out, box-shadow 200ms ease;
+		transition: transform var(--duration-normal) var(--ease-in-out), box-shadow var(--duration-normal) var(--ease-in-out);
 		transform-style: preserve-3d;
 		will-change: transform;
-		animation: card-appear 600ms cubic-bezier(0.0, 0.0, 0.2, 1) both;
+		animation: card-appear var(--duration-normal) var(--ease-standard) both;
 		animation-delay: var(--delay, 0ms);
 		overflow: hidden;
 	}
@@ -76,7 +76,7 @@
 	@keyframes card-appear {
 		from {
 			opacity: 0;
-			transform: perspective(800px) rotateX(4deg) translateY(20px);
+			transform: perspective(800px) rotateX(4deg) translateY(16px);
 		}
 		to {
 			opacity: 1;

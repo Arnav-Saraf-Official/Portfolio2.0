@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { appState, openBook, finishOpening } from '$lib/state/appState';
-	import { TIMING } from '$lib/motion/variants';
+	import { appState, openBook, finishOpening } from '$lib/state/appState.js';
+	import { TIMING } from '$lib/motion/variants.js';
 	import { get } from 'svelte/store';
 
 	let container: HTMLDivElement;
@@ -8,7 +8,10 @@
 	let mouseY = $state(0);
 
 	let currentState = $state<string>('COVER');
-	appState.subscribe((v) => (currentState = v));
+	$effect(() => {
+		const unsub = appState.subscribe((v) => (currentState = v));
+		return unsub;
+	});
 
 	let isOpening = $derived(currentState === 'OPENING');
 	let isVisible = $derived(currentState === 'COVER' || currentState === 'OPENING');
@@ -81,28 +84,24 @@
 	>
 		<div
 			class="cover-book"
-			style="transform: {coverTransform}; transition: transform {isOpening ? TIMING.COVER_OPEN + 'ms cubic-bezier(0.4, 0, 0.2, 1)' : '500ms cubic-bezier(0.34, 1.56, 0.64, 1)'};"
+			style="transform: {coverTransform}; transition: transform {isOpening ? TIMING.COVER_OPEN + 'ms var(--ease-in-out)' : 'var(--duration-fast) var(--ease-standard)'};"
 		>
-			<!-- Book spine shadow -->
 			<div class="spine-shadow"></div>
 
-			<!-- Front face -->
 			<div class="cover-face">
 				<img src="/assets/cover.png" alt="Book cover" class="cover-image" />
 				<div class="cover-overlay"></div>
 
-				<!-- Title with parallax -->
+				<!-- title -->
 				<div class="cover-title" style="transform: translate({mouseX * 0.4}px, {mouseY * 0.4}px); transition: transform 200ms ease-out;">
 					<h1><span class="title-text">My Website</span></h1>
 					<div class="cover-ornament">&#8226; &#8226; &#8226;</div>
 					<div class="cover-subtitle">Touch to open</div>
 				</div>
 
-				<!-- Page edge stack on right side -->
 				<div class="page-edges"></div>
 			</div>
 
-			<!-- Back face (visible during flip) -->
 			<div class="cover-back"></div>
 		</div>
 	</div>

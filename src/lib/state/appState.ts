@@ -3,7 +3,7 @@ import { pushState, replaceState } from '$app/navigation';
 
 export type AppState = 'COVER' | 'OPENING' | 'PAGE_FOCUS' | 'NAVIGATION' | 'FLIPPING';
 
-import pagesData from '$lib/data/pages.json';
+import pagesData from '$lib/data/pages.json' with { type: 'json' };
 
 export const PAGES = pagesData as string[];
 export type PageId = string;

@@ -3,7 +3,6 @@
 		appState,
 		pageIndex,
 		targetPageIndex,
-		zoom,
 		clampZoom,
 		enterNavigation,
 		exitNavigation,
@@ -13,10 +12,11 @@
 		mouseNearBottom,
 		previousState,
 		PAGES
-	} from '$lib/state/appState';
-	import type { AppState } from '$lib/state/appState';
+	} from '$lib/state/appState.js';
+	import type { AppState } from '$lib/state/appState.js';
 	import { get } from 'svelte/store';
 	import gsap from 'gsap';
+	import { EASE_STANDARD } from '$lib/motion/variants.js';
 	import { DragGesture } from '@use-gesture/vanilla';
 	import Cover from './Cover.svelte';
 	import Page from './Page.svelte';
@@ -57,12 +57,12 @@
 		targetZoom = Math.max(ZOOM_MIN, Math.min(1, targetZoom + delta));
 		clampZoom(targetZoom);
 
-		// Kill previous tween, animate zoomProxy.value toward targetZoom
+		// kill prev tween, animate toward targetZoom
 		if (zoomTween) zoomTween.kill();
 		zoomTween = gsap.to(zoomProxy, {
 			value: targetZoom,
 			duration: 0.6,
-			ease: 'power3.out',  // smoother deceleration curve
+			ease: EASE_STANDARD,
 			onUpdate: () => {
 				currentZoomSmooth = zoomProxy.value;
 			},
@@ -95,9 +95,9 @@
 	let isDragging = $state(false);
 	let dragProgress = $state(0);
 	let savedDragProgress = $state(0);
-	let dragDirection = $state(1); // 1 = right-to-left (next), -1 = left-to-right (prev)
+	let dragDirection = $state(1);
 	let dragTargetPageIdx = $state(0);
-	let bookEl: HTMLDivElement;
+	let bookEl = $state<HTMLDivElement | null>(null);
 	let dragGesture: DragGesture | null = null;
 
 	function setupDrag() {
@@ -107,7 +107,7 @@
 			bookEl,
 			(state: any) => {
 				if (state.event) {
-					const rect = bookEl.getBoundingClientRect();
+					const rect = bookEl!.getBoundingClientRect();
 					const ptr = state.event as PointerEvent;
 					const relX = ptr.clientX - rect.left;
 					const edgeZone = rect.width * 0.25;
@@ -119,7 +119,6 @@
 					if (s !== 'NAVIGATION' && s !== 'PAGE_FOCUS') return;
 					
 					const pi = get(pageIndex);
-					// Set initial direction to fallback
 					dragDirection = 1;
 					dragTargetPageIdx = pi;
 				}
@@ -140,7 +139,7 @@
 					}
 
 					isDragging = true;
-					const rect = bookEl.getBoundingClientRect();
+					const rect = bookEl!.getBoundingClientRect();
 					const maxDrag = rect.width * 0.8;
 					dragProgress = Math.min(1, Math.abs(dx) / maxDrag);
 				}
@@ -151,7 +150,6 @@
 
 					if (isDragging && dragProgress > 0) {
 						if (Math.abs(velocity) > 0.5 || Math.abs(dx) > 80) {
-							// Complete the flip
 							savedDragProgress = dragProgress;
 							navigateToPage(dragTargetPageIdx);
 						}
@@ -171,13 +169,14 @@
 	let prevState = $state<AppState>('COVER');
 	let currentPageIdx = $state(0);
 	let targetPageIdx = $state(0);
-	let currentZoom = $state(1);
 
-	appState.subscribe((v) => (currentState = v));
-	previousState.subscribe((v) => (prevState = v));
-	pageIndex.subscribe((v) => (currentPageIdx = v));
-	targetPageIndex.subscribe((v) => (targetPageIdx = v));
-	zoom.subscribe((v) => (currentZoom = v));
+	$effect(() => {
+		const u1 = appState.subscribe((v) => (currentState = v));
+		const u2 = previousState.subscribe((v) => (prevState = v));
+		const u3 = pageIndex.subscribe((v) => (currentPageIdx = v));
+		const u4 = targetPageIndex.subscribe((v) => (targetPageIdx = v));
+		return () => { u1(); u2(); u3(); u4(); };
+	});
 
 	// --- URL routing ---
 	$effect(() => {
@@ -207,7 +206,6 @@
 	// --- Derived values ---
 	let isZoomedOut = $derived(currentState === 'NAVIGATION' || (currentState === 'FLIPPING' && prevState === 'NAVIGATION'));
 
-	// Page dimensions: 50vw × 50vh when zoomed out, full when focused
 	let bookWidth = $derived(isZoomedOut ? '50vw' : '100vw');
 	let bookHeight = $derived(isZoomedOut ? '50vh' : '100vh');
 
@@ -217,15 +215,12 @@
 		currentZoomSmooth
 	);
 
-	// Content interactive only at full zoom
 	let contentInteractive = $derived(
 		currentState === 'PAGE_FOCUS' && currentZoomSmooth >= ZOOM_FOCUS_THRESHOLD
 	);
 
 	let bookStyle = $derived(
-		`width: ${bookWidth}; height: ${bookHeight}; ` +
-		`transform: scale(${bookScale}); ` +
-		`transition: ${isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'};`
+		`width: ${bookWidth}; height: ${bookHeight}; transform: scale(${bookScale});`
 	);
 
 	let showContent = $derived(currentState !== 'COVER' && currentState !== 'OPENING');
@@ -252,12 +247,12 @@
 
 	{#if showContent}
 		<div class="book-wrapper">
-			<!-- Book spine — LEFT side (spine edge), visible when zoomed out -->
 			<div class="book-spine" class:visible={isZoomedOut}></div>
 
 			<div
 				bind:this={bookEl}
 				class="book"
+				class:transitioning={!isDragging}
 				style={bookStyle}
 			>
 				{#if currentState === 'FLIPPING' || isDragging}
@@ -319,11 +314,18 @@
 		position: relative;
 	}
 
-	/* Book spine — LEFT side (spine edge) */
+	.book.transitioning {
+		transition:
+			transform 0.6s var(--ease-standard),
+			width 0.6s var(--ease-standard),
+			height 0.6s var(--ease-standard);
+	}
+
+	/* book spine */
 	.book-spine {
 		width: 0;
 		overflow: hidden;
-		transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+		transition: width 0.6s var(--ease-standard);
 		position: relative;
 		border-radius: 4px 0 0 4px;
 		background: repeating-linear-gradient(

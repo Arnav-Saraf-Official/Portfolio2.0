@@ -32,10 +32,10 @@
 		border-radius: 6px;
 		background: rgba(255, 244, 200, 0.04);
 		transition:
-			transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
-			box-shadow 300ms ease,
-			border-color 300ms ease;
-		animation: card-appear 500ms cubic-bezier(0.0, 0.0, 0.2, 1) both;
+			transform var(--duration-normal) var(--ease-standard),
+			box-shadow var(--duration-normal) var(--ease-standard),
+			border-color var(--duration-normal) var(--ease-standard);
+		animation: card-appear var(--duration-normal) var(--ease-standard) both;
 		animation-delay: var(--delay, 0ms);
 	}
 

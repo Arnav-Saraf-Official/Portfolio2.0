@@ -5,15 +5,18 @@
 		mouseNearBottom,
 		navigateToPage,
 		PAGES
-	} from '$lib/state/appState';
+	} from '$lib/state/appState.js';
 
 	let currentState = $state<string>('COVER');
 	let currentPageIdx = $state(0);
 	let nearBottom = $state(false);
 
-	appState.subscribe((v) => (currentState = v));
-	pageIndex.subscribe((v) => (currentPageIdx = v));
-	mouseNearBottom.subscribe((v) => (nearBottom = v));
+	$effect(() => {
+		const u1 = appState.subscribe((v) => (currentState = v));
+		const u2 = pageIndex.subscribe((v) => (currentPageIdx = v));
+		const u3 = mouseNearBottom.subscribe((v) => (nearBottom = v));
+		return () => { u1(); u2(); u3(); };
+	});
 
 	let hoveringIsland = $state(false);
 	let showIsland = $state(false);
@@ -94,7 +97,7 @@
 			inset 0 1px 0 rgba(255, 255, 255, 0.05);
 		opacity: 0;
 		pointer-events: none;
-		transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+		transition: opacity 0.4s var(--ease-in-out), transform 0.4s var(--ease-in-out);
 	}
 
 	.island.visible {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { zoom } from '$lib/state/appState';
+	import { zoom } from '$lib/state/appState.js';
 
 	let {
 		children,
@@ -10,7 +10,10 @@
 	} = $props();
 
 	let currentZoom = $state(1);
-	zoom.subscribe((v) => (currentZoom = v));
+	$effect(() => {
+		const unsub = zoom.subscribe((v) => (currentZoom = v));
+		return unsub;
+	});
 
 	let vignetteStrength = $derived(0.3 + (1 - currentZoom) * 0.3);
 </script>

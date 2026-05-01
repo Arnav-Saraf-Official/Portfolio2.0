@@ -11,7 +11,6 @@
 }
 
 :root {
-	/* Dark book palette */
 	--bg-dark: #110b05;
 	--bg-faded-brown: #1a1008;
 	--bg-brown: #241810;
@@ -24,7 +23,6 @@
 	--gold-dark: #8a6420;
 	--brass: #c9953c;
 
-	/* Semantic tokens */
 	--color-primary: #78716c;
 	--color-secondary: #92400e;
 	--color-accent: #d97706;
@@ -33,19 +31,18 @@
 	--color-muted: #f6f6f6;
 	--color-border: #eeeded;
 
-	/* Typography */
 	--font-heading: 'Shivaraja', serif;
 	--font-body: 'Roboto', sans-serif;
 	--font-display: 'Shivaraja', serif;
 	--font-label: 'Cinzel', serif;
 
-	/* Animation */
-	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-	--ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
-	--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-	--duration-fast: 150ms;
-	--duration-normal: 300ms;
-	--duration-slow: 500ms;
+	--ease-standard:   cubic-bezier(0.0, 0.0, 0.2, 1);
+	--ease-expressive: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--ease-in-out:     cubic-bezier(0.45, 0, 0.55, 1);
+	--duration-instant: 100ms;
+	--duration-fast:    200ms;
+	--duration-normal:  400ms;
+	--duration-slow:    600ms;
 }
 
 * {
@@ -97,10 +94,9 @@ html, body {
 }
 
 .animate-fade-up {
-	animation: fade-up var(--duration-slow) var(--ease-out) both;
+	animation: fade-up var(--duration-slow) var(--ease-standard) both;
 }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
 	*, *::before, *::after {
 		animation-duration: 0.01ms !important;
