@@ -113,7 +113,6 @@ export function initFromUrl() {
 		pageIndex.set(idx);
 		targetPageIndex.set(idx);
 		appState.set('PAGE_FOCUS');
-		replaceState(PAGE_ROUTES[PAGES[idx]], {});
 	}
 }
 
