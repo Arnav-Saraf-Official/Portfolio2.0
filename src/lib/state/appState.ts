@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { pushState, replaceState } from '$app/navigation';
+import { replaceState } from '$app/navigation';
 
 export type AppState = 'COVER' | 'OPENING' | 'PAGE_FOCUS' | 'NAVIGATION' | 'FLIPPING';
 
@@ -94,7 +94,7 @@ function syncUrl() {
 	const pageId = PAGES[pi];
 	const route = PAGE_ROUTES[pageId];
 	if (route && typeof window !== 'undefined') {
-		pushState(route, {});
+		replaceState(route, {});
 	}
 }
 
@@ -103,12 +103,13 @@ export function urlToPageIndex(pathname: string): number {
 	return ROUTE_TO_INDEX[pathname] ?? 0;
 }
 
-/** Initialize page index from current URL. Called on app mount. */
+/** init page index from curr url */
 export function initFromUrl() {
 	if (typeof window === 'undefined') return;
-	const idx = urlToPageIndex(window.location.pathname);
-	if (idx > 0) {
-		// Deep link — set page index directly, skip cover
+	const pathname = window.location.pathname;
+	const idx = urlToPageIndex(pathname);
+	//skip cover if URL matches
+	if (idx > 0 || ROUTE_TO_INDEX[pathname] !== undefined) {
 		pageIndex.set(idx);
 		targetPageIndex.set(idx);
 		appState.set('PAGE_FOCUS');
@@ -116,7 +117,6 @@ export function initFromUrl() {
 	}
 }
 
-/** Handle browser back/forward. Call on popstate event. */
 export function onPopState() {
 	const idx = urlToPageIndex(window.location.pathname);
 	if (idx !== get(pageIndex)) {
@@ -124,7 +124,6 @@ export function onPopState() {
 	}
 }
 
-/** Navigate directly to a page by its PageId (e.g., from nav links) */
 export function navigateToPageId(pageId: PageId) {
 	const idx = PAGES.indexOf(pageId);
 	if (idx >= 0) navigateToPage(idx);

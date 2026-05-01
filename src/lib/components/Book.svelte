@@ -99,6 +99,8 @@
 	let dragTargetPageIdx = $state(0);
 	let bookEl = $state<HTMLDivElement | null>(null);
 	let dragGesture: DragGesture | null = null;
+	const dragProxy = { value: 0 };
+	let dragSmoothTween: gsap.core.Tween | null = null;
 
 	function setupDrag() {
 		if (!bookEl || dragGesture) return;
@@ -141,19 +143,27 @@
 					isDragging = true;
 					const rect = bookEl!.getBoundingClientRect();
 					const maxDrag = rect.width * 0.8;
-					dragProgress = Math.min(1, Math.abs(dx) / maxDrag);
+					const targetProgress = Math.min(1, Math.abs(dx) / maxDrag);
+					if (dragSmoothTween) dragSmoothTween.kill();
+					dragSmoothTween = gsap.to(dragProxy, {
+						value: targetProgress,
+						duration: 0.05,
+						ease: 'none',
+						onUpdate: () => { dragProgress = dragProxy.value; }
+					});
 				}
 
 				if (state.last) {
-					const dx = state.movement[0];
 					const velocity = state.velocity[0];
 
 					if (isDragging && dragProgress > 0) {
-						if (Math.abs(velocity) > 0.5 || Math.abs(dx) > 80) {
+						if (Math.abs(velocity) > 0.3 || dragProgress > 0.3) {
 							savedDragProgress = dragProgress;
 							navigateToPage(dragTargetPageIdx);
 						}
 					}
+					if (dragSmoothTween) dragSmoothTween.kill();
+					dragProxy.value = 0;
 					isDragging = false;
 					dragProgress = 0;
 				}
