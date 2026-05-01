@@ -389,7 +389,7 @@
 	}
 
 	@keyframes hint-pulse {
-		0%, 100% { opacity: 0.3; }
-		50% { opacity: 0.8; }
+		0%, 100% { opacity: 0.1; }
+		50% { opacity: 0.35; }
 	}
 </style>

@@ -185,10 +185,8 @@
 		overflow: hidden;
 		background: linear-gradient(135deg, #8c4a24 0%, #5c2c10 100%);
 		box-shadow:
-			0 30px 80px rgba(0, 0, 0, 0.7),
-			0 10px 30px rgba(0, 0, 0, 0.5),
-			0 0 60px rgba(224, 122, 95, 0.06),
-			inset 0 0 80px rgba(0, 0, 0, 0.15);
+			0 20px 50px rgba(0, 0, 0, 0.6),
+			0 4px 16px rgba(0, 0, 0, 0.35);
 	}
 
 	.cover-image {
@@ -232,7 +230,7 @@
 		letter-spacing: 0.12em;
 		text-align: center;
 		line-height: 1.15;
-		filter: drop-shadow(0 0 12px rgba(234, 182, 118, 0.5)) drop-shadow(0 0 4px rgba(244, 230, 211, 0.3));
+		filter: drop-shadow(0 0 8px rgba(234, 182, 118, 0.25));
 	}
 
 	.title-text {
@@ -299,7 +297,7 @@
 	}
 
 	@keyframes pulse {
-		0%, 100% { opacity: 0.4; }
-		50% { opacity: 1; }
+		0%, 100% { opacity: 0.65; }
+		50% { opacity: 0.9; }
 	}
 </style>

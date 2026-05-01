@@ -40,7 +40,6 @@
 		border-radius: 4px;
 	}
 
-	/* When zoomed out, prevent all content interaction */
 	.page.locked .content {
 		pointer-events: none;
 		user-select: none;
@@ -56,12 +55,7 @@
 		z-index: 0;
 	}
 
-	/*
-	 * WEATHERING VIGNETTE — dark yellow-orange tinge
-	 * Separate from background. Simulates aged paper:
-	 * edges darken with amber/ochre tint, center stays light.
-	 * Intensity driven by --vignette (tied to zoom).
-	 */
+
 	.paper-vignette {
 		position: absolute;
 		inset: 0;
@@ -72,46 +66,22 @@
 		opacity: var(--vignette, 0.5);
 
 		background:
-			/* Main edge weathering: warm amber darkening */
 			radial-gradient(
 				ellipse at center,
-				transparent 35%,
-				rgba(180, 130, 50, 0.15) 55%,
-				rgba(140, 90, 25, 0.35) 75%,
-				rgba(100, 60, 10, 0.55) 90%,
-				rgba(60, 35, 5, 0.7) 100%
+				transparent 40%,
+				rgba(160, 110, 40, 0.12) 60%,
+				rgba(120, 75, 20, 0.28) 80%,
+				rgba(80, 50, 10, 0.45) 100%
 			),
-			/* Top-left corner: extra warm aging */
-			radial-gradient(
-				ellipse at 0% 0%,
-				rgba(160, 110, 30, 0.3) 0%,
-				rgba(140, 90, 20, 0.1) 40%,
-				transparent 65%
-			),
-			/* Bottom-right corner: deeper burn */
-			radial-gradient(
-				ellipse at 100% 100%,
-				rgba(120, 70, 15, 0.4) 0%,
-				rgba(100, 60, 10, 0.15) 35%,
-				transparent 60%
-			),
-			/* Top-right: slight foxing */
-			radial-gradient(
-				ellipse at 100% 0%,
-				rgba(170, 120, 40, 0.15) 0%,
-				transparent 50%
-			),
-			/* Bottom-left: moisture stain */
 			radial-gradient(
 				ellipse at 0% 100%,
-				rgba(130, 85, 20, 0.2) 0%,
+				rgba(140, 90, 20, 0.18) 0%,
 				transparent 55%
 			);
 
 		mix-blend-mode: multiply;
 	}
 
-	/* Grain texture overlay */
 	.paper-grain {
 		position: absolute;
 		inset: 0;
@@ -124,7 +94,6 @@
 		background-size: 256px 256px;
 	}
 
-	/* Content layer — scrollable horizontally if overflow */
 	.content {
 		position: relative;
 		z-index: 3;

@@ -91,10 +91,7 @@
 		background: rgba(61, 35, 20, 0.92);
 		backdrop-filter: blur(14px);
 		border: 1px solid rgba(224, 122, 95, 0.2);
-		box-shadow:
-			0 8px 32px rgba(0, 0, 0, 0.5),
-			0 2px 8px rgba(0, 0, 0, 0.3),
-			inset 0 1px 0 rgba(255, 255, 255, 0.05);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 0.4s var(--ease-in-out), transform 0.4s var(--ease-in-out);
@@ -107,17 +104,7 @@
 	}
 
 	.island-glow {
-		position: absolute;
-		inset: -1px;
-		border-radius: inherit;
-		background: linear-gradient(
-			135deg,
-			rgba(224, 122, 95, 0.15) 0%,
-			transparent 40%,
-			transparent 60%,
-			rgba(224, 122, 95, 0.08) 100%
-		);
-		pointer-events: none;
+		display: none;
 	}
 
 	.nav-item {
@@ -148,11 +135,10 @@
 		bottom: 4px;
 		left: 50%;
 		width: 18px;
-		height: 2px;
+		height: 1px;
 		border-radius: 1px;
-		background: #e07a5f;
+		background: var(--gold, #d4a843);
 		transform: translateX(-50%);
-		box-shadow: 0 0 8px rgba(224, 122, 95, 0.5);
 	}
 
 	.nav-item:hover:not(:disabled) {

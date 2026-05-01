@@ -10,8 +10,8 @@
 		const rect = card.getBoundingClientRect();
 		const cx = rect.left + rect.width / 2;
 		const cy = rect.top + rect.height / 2;
-		tiltX = ((e.clientY - cy) / rect.height) * -8;
-		tiltY = ((e.clientX - cx) / rect.width) * 8;
+		tiltX = ((e.clientY - cy) / rect.height) * -4;
+		tiltY = ((e.clientX - cx) / rect.width) * 4;
 	}
 
 	function handleMouseLeave() {
@@ -20,7 +20,7 @@
 	}
 
 	let transformStyle = $derived(
-		`perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${tiltX === 0 && tiltY === 0 ? 1 : 1.02})`
+		`perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`
 	);
 </script>
 
@@ -36,7 +36,7 @@
 	<!-- Spotlight effect -->
 	<div
 		class="spotlight"
-		style="background: radial-gradient(circle at {((tiltY / 8) + 0.5) * 100}% {((-tiltX / 8) + 0.5) * 100}%, rgba(212, 168, 67, 0.1), transparent 60%)"
+		style="background: radial-gradient(circle at {((tiltY / 4) + 0.5) * 100}% {((-tiltX / 4) + 0.5) * 100}%, rgba(212, 168, 67, 0.04), transparent 60%)"
 	></div>
 </div>
 
@@ -56,9 +56,7 @@
 	}
 
 	.tilt-card:hover {
-		box-shadow:
-			0 12px 30px rgba(0, 0, 0, 0.35),
-			0 0 30px rgba(212, 168, 67, 0.06);
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
 	}
 
 	.spotlight {
