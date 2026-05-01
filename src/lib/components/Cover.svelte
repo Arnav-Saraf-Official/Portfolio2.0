@@ -56,16 +56,15 @@
 		}
 	});
 
-	// Cover flips from left edge (like real book spine)
 	let coverTransform = $derived(
 		isVisible
-			? `rotateY(${isOpening ? -160 : 0}deg) rotateX(${!isOpening ? -mouseY * 0.3 : 0}deg) rotateZ(${!isOpening ? mouseX * 0.08 : 0}deg)`
+			? `rotateY(${isOpening ? -175 : 0}deg) rotateX(${!isOpening ? -mouseY * 0.3 : 0}deg) rotateZ(${!isOpening ? mouseX * 0.08 : 0}deg)`
 			: ''
 	);
 </script>
 
 {#if isVisible}
-	<div class="cover-bg">
+	<div class="cover-bg" class:opening={isOpening}>
 		<div class="cover-ambient"></div>
 		<div class="cover-particles"></div>
 	</div>
@@ -84,7 +83,7 @@
 	>
 		<div
 			class="cover-book"
-			style="transform: {coverTransform}; transition: transform {isOpening ? TIMING.COVER_OPEN + 'ms var(--ease-in-out)' : 'var(--duration-fast) var(--ease-standard)'};"
+			style="transform: {coverTransform}; transition: transform {isOpening ? TIMING.COVER_OPEN + 'ms cubic-bezier(0.22, 0.05, 0.08, 1)' : 'var(--duration-fast) var(--ease-standard)'};"
 		>
 			<div class="spine-shadow"></div>
 
@@ -113,6 +112,11 @@
 		inset: 0;
 		background: radial-gradient(ellipse at 40% 50%, #3d2314 0%, #221108 60%, #0f0602 100%);
 		z-index: 90;
+		transition: opacity 580ms 120ms ease-out;
+	}
+
+	.cover-bg.opening {
+		opacity: 0;
 	}
 
 	.cover-ambient {

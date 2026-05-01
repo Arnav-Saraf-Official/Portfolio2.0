@@ -204,14 +204,20 @@
 	});
 
 	// --- Derived values ---
+	let isOpening = $derived(currentState === 'OPENING');
 	let isZoomedOut = $derived(currentState === 'NAVIGATION' || (currentState === 'FLIPPING' && prevState === 'NAVIGATION'));
 
-	let bookWidth = $derived(isZoomedOut ? '50vw' : '100vw');
-	let bookHeight = $derived(isZoomedOut ? '50vh' : '100vh');
+	let bookWidth = $derived(
+		isOpening ? 'min(70vmin, 700px)' :
+		isZoomedOut ? '50vw' : '100vw'
+	);
+	let bookHeight = $derived(
+		isOpening ? 'min(52.5vmin, 525px)' :
+		isZoomedOut ? '50vh' : '100vh'
+	);
 
 	let bookScale = $derived(
-		currentState === 'COVER' ? 0.75 :
-		isZoomedOut ? 1 : // zoomed-out pages are already small via vw/vh, no scale needed
+		isZoomedOut || isOpening ? 1 :
 		currentZoomSmooth
 	);
 
@@ -223,7 +229,7 @@
 		`width: ${bookWidth}; height: ${bookHeight}; transform: scale(${bookScale});`
 	);
 
-	let showContent = $derived(currentState !== 'COVER' && currentState !== 'OPENING');
+	let showContent = $derived(currentState !== 'COVER');
 	let CurrentPage = $derived(getPageComponent(currentPageIdx));
 	let TargetPage = $derived(getPageComponent(isDragging ? dragTargetPageIdx : targetPageIdx));
 
@@ -246,7 +252,7 @@
 	<Cover />
 
 	{#if showContent}
-		<div class="book-wrapper">
+		<div class="book-wrapper" class:revealing={isOpening}>
 			<div class="book-spine" class:visible={isZoomedOut}></div>
 
 			<div
@@ -299,11 +305,15 @@
 		background: radial-gradient(ellipse at center, #3d2314 0%, #1f1008 70%, #0d0602 100%);
 	}
 
-	/* Wrapper holds book + spine together */
 	.book-wrapper {
 		display: flex;
 		align-items: stretch;
 		transform-style: preserve-3d;
+	}
+
+	.book-wrapper.revealing {
+		position: relative;
+		z-index: 91;
 	}
 
 	.book {

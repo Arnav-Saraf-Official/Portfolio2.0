@@ -1,6 +1,6 @@
 // Timing constants (ms)
 export const TIMING = {
-	COVER_OPEN: 600,
+	COVER_OPEN: 720,
 	PAGE_FLIP: 600,
 	ZOOM: 600,
 	CONTENT_SWAP: 200
